@@ -13,7 +13,6 @@ class InputWidget extends StatefulWidget {
 
 class _InputWidgetState extends State<InputWidget> {
   late TextEditingController _controller;
-  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -24,24 +23,25 @@ class _InputWidgetState extends State<InputWidget> {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<HomeCubit>();
-    return Expanded(child: BlocBuilder<HomeCubit, HomeState>(
-      builder: (context, state) {
-        return Form(
-          key: _formKey,
-          child: TextFormField(
+    return Expanded(
+      child: BlocBuilder<HomeCubit, HomeState>(
+        builder: (context, state) {
+          return TextField(
             controller: _controller,
             maxLength: _maxLength(state.difficulty),
             keyboardType: TextInputType.number,
+            autocorrect: false,
+            textInputAction: TextInputAction.go,
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly,
             ],
-            onFieldSubmitted: (v) {
+            onSubmitted: (v) {
               if (_validator(value: v, difficulty: state.difficulty) == null) {
                 cubit.calculateNumber(int.parse(v));
                 _controller.clear();
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  _snackBar(v, state),
+                  _snackBar(v, state.difficulty),
                 );
               }
             },
@@ -52,17 +52,17 @@ class _InputWidgetState extends State<InputWidget> {
               label: Text("Números"),
               errorText: null,
             ),
-          ),
-        );
-      },
-    ));
+          );
+        },
+      ),
+    );
   }
 
-  SnackBar _snackBar(String v, HomeState state) {
+  SnackBar _snackBar(String v, int difficulty) {
     return SnackBar(
       content: Center(
         child: Text(
-          _validator(value: v, difficulty: state.difficulty) ?? "",
+          _validator(value: v, difficulty: difficulty) ?? "",
           style: TextStyle(
               fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white),
         ),

@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="adivina_el_numero"
+        android:label="Adivina el Número"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
